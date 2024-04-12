@@ -1,4 +1,4 @@
-const { app, ipcMain, shell, BrowserWindow, Menu, Tray } = require('electron');
+const { app, ipcMain, shell, BrowserWindow, Menu, Tray, screen } = require('electron');
 const path = require('node:path');
 
 import { kbs } from './api/core';
@@ -17,24 +17,58 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-const createWindow = () => {
+const toggleWindow = () => {
   // Check if the window exists and isn't destroyed; if so,
   // focus or restore it.
   if (mainWindow && !mainWindow.isDestroyed()) {
     if (mainWindow.isMinimized()) {
       mainWindow.restore();
+      return;
     }
+
+    if (!mainWindow.isVisible()) {
+      mainWindow.show();
+      return;
+    }
+
     mainWindow.focus();
     return;
   }
 
+  // Get the primary display's work area size
+  const appWidth = 500;
+  const appHeight = 800;
+  const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+  // Calculate the x and y position for the window
+  // Position the window on the bottom right of the screen
+  const x = width - appWidth - 10;
+  const y = height - appHeight - 10;
+
   // Create the browser window.
   mainWindow = new BrowserWindow({
+    x: x,
+    y: y,
+    frame: false,
+    resizable: false,
+    movable: false,
+    minimizable: false,
+    maximizable: false,
+    closable: false,
+    alwaysOnTop: true,
+    fullscreenable: false,
+    hiddenInMissionControl: true,
+    show: false,
     width: 500,
     height: 800,
+    skipTaskbar: true,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
+  });
+
+  // Close the window when it loses focus.
+  mainWindow.on('blur', () => {
+    mainWindow.hide();
   });
 
   // Hide the menu bar
@@ -75,13 +109,13 @@ app.whenReady().then(() => {
     console.error('Failed to find Keyboard Sounds backend installation:', err);
   });
 
-  createWindow();
+  toggleWindow();
 
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
+      toggleWindow();
     }
   });
 
@@ -95,7 +129,7 @@ app.whenReady().then(() => {
 
   // Allow the user to double-click the tray icon to open
   // or focus the application window.
-  tray.on('double-click', createWindow);
+  tray.on('click', toggleWindow);
 });
 
 // Display a notification when the application is closed
