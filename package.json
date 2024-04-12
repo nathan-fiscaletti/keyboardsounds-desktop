@@ -1,0 +1,49 @@
+{
+  "name": "kbs-electron",
+  "productName": "kbs-electron",
+  "version": "1.0.0",
+  "description": "My Electron application description",
+  "main": ".webpack/main",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\""
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.4",
+    "@babel/preset-react": "^7.24.1",
+    "@electron-forge/cli": "^7.3.1",
+    "@electron-forge/maker-deb": "^7.3.1",
+    "@electron-forge/maker-rpm": "^7.3.1",
+    "@electron-forge/maker-squirrel": "^7.3.1",
+    "@electron-forge/maker-zip": "^7.3.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.3.1",
+    "@electron-forge/plugin-fuses": "^7.2.0",
+    "@electron-forge/plugin-webpack": "^7.3.1",
+    "@electron/fuses": "^1.7.0",
+    "@vercel/webpack-asset-relocator-loader": "1.7.3",
+    "babel-loader": "^9.1.3",
+    "css-loader": "^6.0.0",
+    "electron": "29.2.0",
+    "file-loader": "^6.2.0",
+    "node-loader": "^2.0.0",
+    "style-loader": "^3.0.0"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Nathan Fiscaletti",
+    "email": "nate.fiscaletti@gmail.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/icons-material": "^5.15.15",
+    "@mui/material": "^5.15.15",
+    "electron-squirrel-startup": "^1.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
