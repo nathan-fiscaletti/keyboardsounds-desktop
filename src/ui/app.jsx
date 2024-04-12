@@ -10,7 +10,8 @@ import green from "@mui/material/colors/green";
 
 import { Settings } from "./pages";
 import { Profiles } from "./pages";
-import { Test } from "./pages";
+import { Status } from "./pages";
+import { AppRules } from "./pages";
 
 import Card from "@mui/material/Card";
 import Tooltip from "@mui/material/Tooltip";
@@ -89,6 +90,7 @@ function App() {
   // Listen for status updates from the main process.
   const [volume, setVolume] = useState(0);
   const [profiles, setProfiles] = useState([]);
+  const [appRules, setAppRules] = useState([]);
   const [initialStatusLoaded, setInitialStatusLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState('');
@@ -122,9 +124,11 @@ function App() {
   }, [status]);
 
   useEffect(() => {
-    execute("profiles", (profiles) => {
-      setProfiles(profiles);
-    });
+    execute("profiles", setProfiles);
+  }, []);
+
+  useEffect(() => {
+    execute("rules", setAppRules)
   }, []);
 
   const handleCommand = (cmd) => {
@@ -145,7 +149,7 @@ function App() {
     setSelectedProfile(event.target.value);
   };
 
-  const [selectedTab, setSelectedTab] = useState(4);
+  const [selectedTab, setSelectedTab] = useState(0);
 
   return (
     <ThemeProvider theme={theme}>
@@ -214,19 +218,22 @@ function App() {
           <Tooltip title="Status" arrow><Tab icon={<MonitorHeartIcon />} /></Tooltip>
           <Tooltip title="Profiles" arrow><Tab icon={<LibraryMusicIcon />} /></Tooltip>
           <Tooltip title="Application Rules" arrow><Tab icon={<GavelIcon />} /></Tooltip>
-          <Tooltip title="Test" arrow><Tab icon={<VolumeUpIcon />} /></Tooltip>
           <Tooltip title="Settings" arrow><Tab icon={<SettingsIcon />} /></Tooltip>
         </Tabs>
+
+        {selectedTab === 0 && (
+          <Status status={status} initialStatusLoaded={initialStatusLoaded} />
+        )}
 
         {selectedTab === 1 && (
           <Profiles profiles={profiles} />
         )}
 
-        {selectedTab === 3 && (
-          <Test status={status} initialStatusLoaded={initialStatusLoaded} />
+        {selectedTab === 2 && (
+          <AppRules appRules={appRules} />
         )}
 
-        {selectedTab === 4 && (
+        {selectedTab === 3 && (
           <Settings 
             status={status}
             profiles={profiles}

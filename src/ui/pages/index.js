@@ -1,5 +1,6 @@
 import { Settings } from "./settings.jsx";
 import { Profiles } from "./profiles.jsx";
-import { Test } from "./test.jsx";
+import { Status } from "./status.jsx";
+import { AppRules } from "./app-rules.jsx";
 
-export { Settings, Profiles, Test };
+export { Settings, Profiles, Status, AppRules };

@@ -1,4 +1,4 @@
-const { app, ipcMain, shell, BrowserWindow, Menu, Tray, screen } = require('electron');
+const { app, ipcMain, shell, BrowserWindow, Menu, Tray, screen, dialog } = require('electron');
 const path = require('node:path');
 
 import { kbs } from './api/core';
@@ -104,9 +104,13 @@ app.whenReady().then(() => {
       console.log(`Found Keyboard Sounds backend installation with version: ${version}`);
     }).catch((err) => {
       console.error('Failed to get Keyboard Sounds backend version:', err);
+      dialog.showErrorBox('Keyboard Sounds: Error', 'Failed to retrieve Keyboard Sounds backend version.');
+      process.exit(1);
     });
   }).catch((err) => {
     console.error('Failed to find Keyboard Sounds backend installation:', err);
+    dialog.showErrorBox('Keyboard Sounds: Error', 'Keyboard Sounds backend is not installed or not functioning properly. Please install the Keyboard Sounds backend from https://keyboardsounds.net/ and try again.');
+    process.exit(1);
   });
 
   toggleWindow();

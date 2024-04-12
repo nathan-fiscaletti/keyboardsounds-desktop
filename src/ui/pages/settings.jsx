@@ -33,7 +33,7 @@ const Settings = ({status, profiles, selectedProfile, volume, onProfileChanged, 
           sx={{ mb: 1 }}
         >
           <Typography variant="body2">
-            Settings cannot be adjusted while Keyboard Sounds is running.
+            Settings can't be adjusted while the daemon is running.
           </Typography>
         </Alert>
       )}
@@ -143,7 +143,7 @@ const Settings = ({status, profiles, selectedProfile, volume, onProfileChanged, 
           whiteSpace: "pre-wrap",
           height: "100px",
           overflowY: "auto",
-          minHeight: status && initialStatusLoaded && status.status === 'running' ? "calc(100vh - 628px)" : "calc(100vh - 570px)",
+          minHeight: status && initialStatusLoaded && status.status === 'running' ? "calc(100vh - 644px)" : "calc(100vh - 570px)",
         }}>
           <Typography
             variant="body2"

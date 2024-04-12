@@ -47,10 +47,25 @@ const kbs = {
 
     profiles: function() {
         return new Promise((resolve, reject) => {
-            this.exec('list-profiles --short', false).then((stdout) => {
+            this.exec('list-profiles --short', true).then((stdout) => {
                 try {
                     const profiles = JSON.parse(stdout);
                     resolve(profiles);
+                } catch (err) {
+                    reject(err);
+                }
+            }).catch((err) => {
+                reject(err);
+            });
+        });
+    },
+
+    rules: function() {
+        return new Promise((resolve, reject) => {
+            this.exec('list-rules --short', true).then((stdout) => {
+                try {
+                    const rules = JSON.parse(stdout);
+                    resolve(rules);
                 } catch (err) {
                     reject(err);
                 }

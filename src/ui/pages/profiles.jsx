@@ -16,10 +16,6 @@ import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import IosShareIcon from '@mui/icons-material/IosShare';
 
-import Link from '@mui/material/Link';
-
-import { InfoAlert } from '../components';
-
 function ProfileListItem({ profile: { name, author, description } }) {  
   return (
     <ListItem
@@ -63,13 +59,7 @@ const Profiles = ({profiles}) => {
       ml: 2,
       pt: 2,
     }}>
-      <InfoAlert>
-          Profiles provide a way to customize the sounds that are played while
-          typing. You can create new profiles to share with others using the{" "}
-          <Link href="https://github.com/nathan-fiscaletti/keyboardsounds" target="_blank">Keyboard Sounds CLI</Link>.
-      </InfoAlert>
-
-      <Typography variant="h6" sx={{ mt: 1 }}>Profiles</Typography>
+      <Typography variant="h6">Profiles</Typography>
       <Box sx={{
         display: 'flex',
         flexDirection: 'row',
@@ -99,7 +89,7 @@ const Profiles = ({profiles}) => {
       </Box>
       <List sx={{
         overflow: 'auto',
-        maxHeight: 'calc(100vh - 390px)',
+        maxHeight: 'calc(100vh - 278px)',
         '&::-webkit-scrollbar': {
           width: '8px',
         },
