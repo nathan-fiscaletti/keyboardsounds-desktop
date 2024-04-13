@@ -30,6 +30,8 @@ import MonitorHeartIcon from "@mui/icons-material/MonitorHeart";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import { IconButton, Typography, Link } from "@mui/material";
 
+import { execute } from './execute';
+
 const StatusColors = {
   enabled: green[500],
   disabled: "#f55d42",
@@ -45,7 +47,7 @@ const theme = createTheme({
 });
 
 function ControlButton({
-  initialStatusLoaded,
+  statusLoaded,
   status,
   isLoading,
   selectedProfile,
@@ -54,11 +56,11 @@ function ControlButton({
 }) {
   return (
     <Box>
-      {!initialStatusLoaded && (
+      {!statusLoaded && (
         <CircularProgress sx={{ color: "#fff" }} size={18} />
       )}
 
-      {initialStatusLoaded && status.status !== "running" && (
+      {statusLoaded && status.status !== "running" && (
         <Button
           variant="contained"
           startIcon={
@@ -74,7 +76,7 @@ function ControlButton({
         </Button>
       )}
 
-      {initialStatusLoaded && status.status === "running" && (
+      {statusLoaded && status.status === "running" && (
         <Button
           variant="contained"
           color="error"
@@ -94,30 +96,21 @@ function ControlButton({
   );
 }
 
-const execute = (cmd, handler) => {
-  const channelId = Math.random().toString(36).substring(7);
-  let removeExecuteListener = null;
-  removeExecuteListener = window.kbs.receive(
-    `kbs_execute_result_${channelId}`,
-    (result) => {
-      if (removeExecuteListener !== null) {
-        removeExecuteListener();
-      }
-      handler(result);
-    }
-  );
-  window.kbs.execute(cmd, channelId);
-};
-
 function App() {
   // Listen for status updates from the main process.
   const [volume, setVolume] = useState(0);
-  const [profiles, setProfiles] = useState([]);
-  const [appRules, setAppRules] = useState([]);
-  const [initialStatusLoaded, setInitialStatusLoaded] = useState(false);
+  const [displayVolume, setDisplayVolume] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState('');
+  
   const [status, setStatus] = useState(null);
+  const [statusLoaded, setStatusLoaded] = useState(false);
+
+  const [appRules, setAppRules] = useState([]);
+  const [appRulesLoaded, setAppRulesLoaded] = useState(false);
+
+  const [profiles, setProfiles] = useState([]);
+  const [profilesLoaded, setProfilesLoaded] = useState(false);
 
   useEffect(() => {
     const removeStatusListener = window.kbs.receive(
@@ -134,33 +127,88 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!initialStatusLoaded && status !== null) {
-      setInitialStatusLoaded(true);
+    if (!statusLoaded && status !== null) {
+      setStatusLoaded(true);
+      if (status.volume !== null) {
+        setDisplayVolume(status.volume);
+        setVolume(status.volume);
+      }
     }
 
     if (status !== null) {
       if (status.status === 'running') {
-        setVolume(status.volume);
-        setSelectedProfile(status.profile);
+        // setDisplayVolume(status.volume);
+        // setSelectedProfile(status.profile);
       }
     }
   }, [status]);
 
   useEffect(() => {
-    execute("profiles", setProfiles);
+    const removeAppRulesListener = window.kbs.receive(
+      "kbs-app-rules",
+      (newAppRules) => {
+        setAppRules(newAppRules);
+      }
+    );
+
+    return () => {
+      removeAppRulesListener();
+    }
   }, []);
 
   useEffect(() => {
-    execute("rules", setAppRules)
+    if(!appRulesLoaded && appRules.length > 0) {
+      setAppRulesLoaded(true);
+    }
+
+    if (appRules.length > 0) {
+      console.log(appRules);
+    }
+  }, [appRules]);
+
+  useEffect(() => {
+    const removeProfilesListener = window.kbs.receive(
+      "kbs-profiles",
+      (newProfiles) => {
+        setProfiles(newProfiles);
+      }
+    );
+
+    return () => {
+      removeProfilesListener();
+    }
   }, []);
+
+  useEffect(() => {
+    if (!profilesLoaded && profiles.length > 0) {
+      setProfilesLoaded(true);
+      if (selectedProfile === '') {
+        setSelectedProfile(profiles[0].name);
+      }
+    }
+
+    if (profiles.length > 0) {
+      console.log(profiles);
+    }
+  }, [profiles]);
+
+  useEffect(() => {
+    const run = async () => {
+      if (statusLoaded && status.status === "running") {
+        console.log(`setVolume ${volume}`);
+        await execute(`setVolume ${volume}`);
+      }
+    };
+    run();
+  }, [volume]);
 
   const handleCommand = (cmd) => {
     return () => {
       // Set loading state
       setIsLoading(true);
 
-      execute(cmd, (result) => {
-        execute("status", (status) => {
+      execute(cmd).then((_) => {
+        execute("status").then((status) => {
           setStatus(status);
           setIsLoading(false);
         });
@@ -170,9 +218,12 @@ function App() {
 
   const handleProfileChanged = (event) => {
     setSelectedProfile(event.target.value);
+    if (statusLoaded && status.status === "running") {
+      execute(`setProfile ${event.target.value}`).then((_) => {});
+    }
   };
 
-  const [selectedTab, setSelectedTab] = useState(0);
+  const [selectedTab, setSelectedTab] = useState(2);
 
   return (
     <ThemeProvider theme={theme}>
@@ -209,13 +260,13 @@ function App() {
           <Tooltip placement="bottom-start" title="View on GitHub" arrow>
             <IconButton sx={{
               mr: 1.5,
-            }} onClick={() => execute("openInBrowser", (_) => {})}>
+            }} onClick={() => execute("openInBrowser")}>
               <GitHubIcon />
             </IconButton>
           </Tooltip>
 
           <ControlButton 
-            initialStatusLoaded={initialStatusLoaded}
+            statusLoaded={statusLoaded}
             status={status}
             isLoading={isLoading}
             selectedProfile={selectedProfile}
@@ -245,26 +296,29 @@ function App() {
         </Tabs>
 
         {selectedTab === 0 && (
-          <Status status={status} initialStatusLoaded={initialStatusLoaded} />
+          <Status status={status} statusLoaded={statusLoaded} />
         )}
 
         {selectedTab === 1 && (
-          <Profiles status={status} profiles={profiles} />
+          <Profiles statusLoaded={statusLoaded} status={status} profilesLoaded={profilesLoaded} profiles={profiles} />
         )}
 
         {selectedTab === 2 && (
-          <AppRules appRules={appRules} />
+          <AppRules appRules={appRules} appRulesLoaded={appRulesLoaded} />
         )}
 
         {selectedTab === 3 && (
           <Settings 
+            statusLoaded={statusLoaded}
             status={status}
+            profilesLoaded={profilesLoaded}
             profiles={profiles}
             selectedProfile={selectedProfile} 
-            volume={volume}
+            displayVolume={displayVolume}
             onProfileChanged={handleProfileChanged}
             onVolumeChanged={setVolume}
-            initialStatusLoaded={initialStatusLoaded} />
+            onDisplayVolumeChanged={setDisplayVolume}
+          />
         )}
 
       </Card>

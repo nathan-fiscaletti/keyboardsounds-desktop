@@ -1,5 +1,5 @@
+import { Socket } from "net";
 import { BrowserWindow, shell } from 'electron';
-
 import { exec } from 'child_process';
 
 const kbs = {
@@ -47,7 +47,7 @@ const kbs = {
 
     profiles: function() {
         return new Promise((resolve, reject) => {
-            this.exec('list-profiles --short', true).then((stdout) => {
+            this.exec('list-profiles --short', false).then((stdout) => {
                 try {
                     const profiles = JSON.parse(stdout);
                     resolve(profiles);
@@ -62,7 +62,7 @@ const kbs = {
 
     rules: function() {
         return new Promise((resolve, reject) => {
-            this.exec('list-rules --short', true).then((stdout) => {
+            this.exec('list-rules --short', false).then((stdout) => {
                 try {
                     const rules = JSON.parse(stdout);
                     resolve(rules);
@@ -72,6 +72,34 @@ const kbs = {
             }).catch((err) => {
                 reject(err);
             });
+        });
+    },
+
+    executeDaemonCommand: async function(command) {
+        const status = await this.status();
+        if (status.status !== 'running') {
+            return Promise.reject('Keyboard Sounds is not running.');
+        }
+
+        const port = status.api_port;
+        const socket = new Socket();
+        socket.connect(port, 'localhost', () => {
+            socket.write(Buffer.from(JSON.stringify(command)).toString('base64') + "\n");
+            socket.destroy();
+        });
+    },
+
+    setVolume: async function(volume) {
+        return this.executeDaemonCommand({
+            action: 'set_volume',
+            volume: Number(volume)
+        });
+    },
+
+    setProfile: async function(profile) {
+        return this.executeDaemonCommand({
+            action: 'set_profile',
+            profile: profile
         });
     },
 
@@ -89,10 +117,12 @@ const kbs = {
         ipcMain.on('kbs', async (event, data) => {
             const { command, channelId } = data;
 
+            const [commandName, ...commandArgs] = command.split(' ');
+
             // check if cmd is a member of this
-            if (typeof this[command] === 'function') {
+            if (typeof this[commandName] === 'function') {
                 try {
-                    const result = await this[command]();
+                    const result = await this[commandName](...commandArgs);
                     event.reply(`kbs_execute_result_${channelId}`, result);
                 } catch (err) {
                     event.reply(`kbs_execute_result_${channelId}`, err);
@@ -120,6 +150,31 @@ const kbs = {
             });
         }, 1000);
     },
+
+    registerAppRulesMonitor: function (ipcMain) {
+        // Watch the app rules and notify the renderer process when they change
+        setInterval(() => {
+            this.rules().then((rules) => {
+                BrowserWindow.getAllWindows().forEach(window => {
+                    window.webContents.send('kbs-app-rules', rules);
+                });
+            }).catch((err) => {
+                console.error('Failed to fetch app rules:', err);
+            });
+        }, 1000);
+    },
+
+    registerProfilesMonitor: function (ipcMain) {
+        setInterval(() => {
+            this.profiles().then((profiles) => {
+                BrowserWindow.getAllWindows().forEach(window => {
+                    window.webContents.send('kbs-profiles', profiles);
+                });
+            }).catch((err) => {
+                console.error('Failed to fetch profiles:', err);
+            });
+        }, 1000);
+    }
 }
 
 export { kbs };

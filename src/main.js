@@ -60,7 +60,7 @@ const toggleWindow = () => {
     show: false,
     width: 500,
     height: 800,
-    // skipTaskbar: true,
+    skipTaskbar: true,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
@@ -83,6 +83,8 @@ const toggleWindow = () => {
   // Load IPC handlers
   kbs.registerKbsIpcHandler(ipcMain);
   kbs.registerStatusMonitor(ipcMain);
+  kbs.registerAppRulesMonitor(ipcMain);
+  kbs.registerProfilesMonitor(ipcMain);
 
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);

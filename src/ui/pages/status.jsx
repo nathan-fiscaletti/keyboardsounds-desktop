@@ -2,7 +2,7 @@ import React from "react";
 
 import { Box, Typography, Alert, TextField } from "@mui/material";
 
-const Status = ({ status, initialStatusLoaded }) => {
+const Status = ({ status, statusLoaded }) => {
   return (
     <Box
       sx={{
@@ -33,14 +33,14 @@ const Status = ({ status, initialStatusLoaded }) => {
         <Typography
           variant="button"
           color={
-            !initialStatusLoaded
+            !statusLoaded
               ? "HighlightText"
               : status.status === "running"
               ? "green"
               : "red"
           }
         >
-          {initialStatusLoaded ? status.user_status : "Loading..."}
+          {statusLoaded ? status.user_status : "Loading..."}
         </Typography>
       </Box>
 
@@ -71,7 +71,7 @@ const Status = ({ status, initialStatusLoaded }) => {
             Volume
           </Typography>
           <Typography variant="button" color="GrayText">
-            {initialStatusLoaded && status.volume !== null ? `${status.volume}%` : "N/A"}
+            {statusLoaded && status.volume !== null ? `${status.volume}%` : "N/A"}
           </Typography>
         </Box>
 
@@ -93,7 +93,7 @@ const Status = ({ status, initialStatusLoaded }) => {
             Selected Profile
           </Typography>
           <Typography variant="button" color="GrayText">
-            {initialStatusLoaded && status.profile ? status.profile : "N/A"}
+            {statusLoaded && status.profile ? status.profile : "N/A"}
           </Typography>
         </Box>
 
@@ -115,7 +115,7 @@ const Status = ({ status, initialStatusLoaded }) => {
             Daemon Status
           </Typography>
           <Typography variant="button" color="GrayText">
-            {initialStatusLoaded && status.status ? status.status : "N/A"}
+            {statusLoaded && status.status ? status.status : "N/A"}
           </Typography>
         </Box>
 
@@ -137,7 +137,7 @@ const Status = ({ status, initialStatusLoaded }) => {
             Daemon PID
           </Typography>
           <Typography variant="button" color="GrayText">
-            {initialStatusLoaded && status.pid ? status.pid : "N/A"}
+            {statusLoaded && status.pid ? status.pid : "N/A"}
           </Typography>
         </Box>
 
@@ -159,7 +159,7 @@ const Status = ({ status, initialStatusLoaded }) => {
             Daemon Lock
           </Typography>
           <Typography variant="button" color="GrayText">
-            {initialStatusLoaded
+            {statusLoaded
               ? status.lock.active
                 ? "Active"
                 : "Inactive"
@@ -190,7 +190,7 @@ const Status = ({ status, initialStatusLoaded }) => {
             multiline
             placeholder="Type here..."
             fullWidth
-            disabled={!initialStatusLoaded || status.status !== 'running'}
+            disabled={!statusLoaded || status.status !== 'running'}
             rows={5.6}
         />
       </Box>

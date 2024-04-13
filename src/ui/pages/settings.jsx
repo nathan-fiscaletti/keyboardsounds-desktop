@@ -16,13 +16,15 @@ import WarningIcon from "@mui/icons-material/Warning";
 import { Alert, Button, TextField, Link } from "@mui/material";
 
 const Settings = ({
+  statusLoaded,
   status,
+  profilesLoaded,
   profiles,
   selectedProfile,
-  volume,
+  displayVolume,
   onProfileChanged,
   onVolumeChanged,
-  initialStatusLoaded,
+  onDisplayVolumeChanged,
 }) => {
   return (
     <Box
@@ -32,21 +34,6 @@ const Settings = ({
         mt: 2,
       }}
     >
-      {status && initialStatusLoaded && status.status === "running" && (
-        <Alert
-          severity="warning"
-          variant="outlined"
-          iconMapping={{
-            success: <WarningIcon />,
-          }}
-          sx={{ mb: 1 }}
-        >
-          <Typography variant="body2">
-            Settings can't be adjusted while the daemon is running.
-          </Typography>
-        </Alert>
-      )}
-
       <Typography
         sx={{
           mb: 1.5,
@@ -60,9 +47,8 @@ const Settings = ({
           labelId="profile-select-label"
           value={selectedProfile}
           onChange={onProfileChanged}
-          disabled={initialStatusLoaded && status.status === "running"}
         >
-          {profiles.map((profile) => (
+          {profilesLoaded && profiles.map((profile) => (
             <MenuItem key={profile.name} value={profile.name}>
               {profile.name}
             </MenuItem>
@@ -90,9 +76,9 @@ const Settings = ({
           defaultValue={70}
           aria-label="Small"
           valueLabelDisplay="off"
-          value={volume}
-          onChange={(event, value) => onVolumeChanged(value)}
-          disabled={initialStatusLoaded && status.status === "running"}
+          value={displayVolume}
+          onChange={(event, value) => onDisplayVolumeChanged(value)}
+          onChangeCommitted={(event, value) => onVolumeChanged(value)}
           sx={{
             ml: 1,
             mr: 1,
@@ -180,10 +166,7 @@ const Settings = ({
             whiteSpace: "pre-wrap",
             height: "100px",
             overflowY: "auto",
-            minHeight:
-              status && initialStatusLoaded && status.status === "running"
-                ? "calc(100vh - 623px)"
-                : "calc(100vh - 570px)",
+            minHeight: "calc(100vh - 570px)",
           }}
         >
           <Typography

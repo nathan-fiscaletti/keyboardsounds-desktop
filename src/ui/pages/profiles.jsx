@@ -17,13 +17,13 @@ import SearchIcon from '@mui/icons-material/Search';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import { Chip } from "@mui/material";
 
-function ProfileListItem({ status, profile: { name, author, description } }) {  
+function ProfileListItem({ statusLoaded, status, profile: { name, author, description } }) {  
   return (
     <ListItem
       disableGutters
       secondaryAction={
         <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          {status.profile === name && (
+          {statusLoaded && status.profile === name && (
             <Chip sx={{ mr: 1 }} size="small" label="Active" variant="filled" color="success" />
           )}
           <Tooltip title="Export & Share" placement="top" arrow>
@@ -38,6 +38,12 @@ function ProfileListItem({ status, profile: { name, author, description } }) {
             </Tooltip>
         </Box>
       }
+      sx={{
+        borderRadius: 2,
+        mb: 1,
+        bgcolor: "background.default",
+        pl: 2,
+      }}
     >
       <ListItemText
         primary={(
@@ -47,10 +53,12 @@ function ProfileListItem({ status, profile: { name, author, description } }) {
         )}
         secondary={description}
         secondaryTypographyProps={{
+          noWrap: true,
+          variant: "caption",
           style: {
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
             maxWidth: 'calc(100vw - 225px)',
           }
         }}
@@ -59,7 +67,7 @@ function ProfileListItem({ status, profile: { name, author, description } }) {
   );
 }
 
-const Profiles = ({status, profiles}) => {
+const Profiles = ({statusLoaded, status, profilesLoaded, profiles}) => {
   const [profileSearchValue, setProfileSearchValue] = useState('');
 
   return (
@@ -97,6 +105,7 @@ const Profiles = ({status, profiles}) => {
       </Box>
       <List sx={{
         overflow: 'auto',
+        pr: 1, 
         maxHeight: 'calc(100vh - 278px)',
         '&::-webkit-scrollbar': {
           width: '8px',
@@ -108,8 +117,8 @@ const Profiles = ({status, profiles}) => {
           backgroundColor: 'rgba(255, 255, 255, 0.2)',
         },
       }}>
-        {profiles.filter(p => profileSearchValue === "" || p.name.toLowerCase().includes(profileSearchValue.toLowerCase())).map((profile) => (
-          <ProfileListItem status={status} key={profile.name} profile={profile} />
+        {profilesLoaded && profiles.filter(p => profileSearchValue === "" || p.name.toLowerCase().includes(profileSearchValue.toLowerCase())).map((profile) => (
+          <ProfileListItem statusLoaded={statusLoaded} status={status} key={profile.name} profile={profile} />
         ))}
       </List>
     </Box>
