@@ -17,25 +17,24 @@ import Card from "@mui/material/Card";
 import Tooltip from "@mui/material/Tooltip";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
 
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import StopIcon from "@mui/icons-material/Stop";
-import CircularProgress from '@mui/material/CircularProgress';
-import GavelIcon from '@mui/icons-material/Gavel';
-import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
-import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-import SettingsIcon from '@mui/icons-material/Settings';
-import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
-import GitHubIcon from '@mui/icons-material/GitHub';
+import CircularProgress from "@mui/material/CircularProgress";
+import GavelIcon from "@mui/icons-material/Gavel";
+import LibraryMusicIcon from "@mui/icons-material/LibraryMusic";
+import SettingsIcon from "@mui/icons-material/Settings";
+import MonitorHeartIcon from "@mui/icons-material/MonitorHeart";
+import GitHubIcon from "@mui/icons-material/GitHub";
 import { IconButton, Typography, Link } from "@mui/material";
 
 const StatusColors = {
   enabled: green[500],
   disabled: "#f55d42",
   loading: "#e3e3e3",
-}
+};
 
 // Create the initial theme for the application.
 const theme = createTheme({
@@ -45,15 +44,30 @@ const theme = createTheme({
   },
 });
 
-function ControlButton({initialStatusLoaded, status, isLoading, selectedProfile, volume, handleCommand}) {
+function ControlButton({
+  initialStatusLoaded,
+  status,
+  isLoading,
+  selectedProfile,
+  volume,
+  handleCommand,
+}) {
   return (
     <Box>
-      {!initialStatusLoaded && <CircularProgress sx={{ color: '#fff' }} size={18} />}
+      {!initialStatusLoaded && (
+        <CircularProgress sx={{ color: "#fff" }} size={18} />
+      )}
 
       {initialStatusLoaded && status.status !== "running" && (
-        <Button 
+        <Button
           variant="contained"
-          startIcon={isLoading ? <CircularProgress sx={{ color: '#000000de' }} size={18} /> : <PlayArrowIcon />}
+          startIcon={
+            isLoading ? (
+              <CircularProgress sx={{ color: "#000000de" }} size={18} />
+            ) : (
+              <PlayArrowIcon />
+            )
+          }
           onClick={handleCommand(`start -p ${selectedProfile} -v ${volume}`)}
         >
           Enable
@@ -61,10 +75,16 @@ function ControlButton({initialStatusLoaded, status, isLoading, selectedProfile,
       )}
 
       {initialStatusLoaded && status.status === "running" && (
-        <Button 
+        <Button
           variant="contained"
           color="error"
-          startIcon={isLoading ? <CircularProgress sx={{ color: '#fff' }} size={18} /> : <StopIcon />}
+          startIcon={
+            isLoading ? (
+              <CircularProgress sx={{ color: "#fff" }} size={18} />
+            ) : (
+              <StopIcon />
+            )
+          }
           onClick={handleCommand("stop")}
         >
           Disable
@@ -77,12 +97,15 @@ function ControlButton({initialStatusLoaded, status, isLoading, selectedProfile,
 const execute = (cmd, handler) => {
   const channelId = Math.random().toString(36).substring(7);
   let removeExecuteListener = null;
-  removeExecuteListener = window.kbs.receive(`kbs_execute_result_${channelId}`, (result) => {
-    if (removeExecuteListener !== null) {
-      removeExecuteListener();
+  removeExecuteListener = window.kbs.receive(
+    `kbs_execute_result_${channelId}`,
+    (result) => {
+      if (removeExecuteListener !== null) {
+        removeExecuteListener();
+      }
+      handler(result);
     }
-    handler(result);
-  });
+  );
   window.kbs.execute(cmd, channelId);
 };
 
@@ -226,7 +249,7 @@ function App() {
         )}
 
         {selectedTab === 1 && (
-          <Profiles profiles={profiles} />
+          <Profiles status={status} profiles={profiles} />
         )}
 
         {selectedTab === 2 && (

@@ -60,7 +60,7 @@ const toggleWindow = () => {
     show: false,
     width: 500,
     height: 800,
-    skipTaskbar: true,
+    // skipTaskbar: true,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },

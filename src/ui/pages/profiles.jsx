@@ -15,35 +15,43 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import IosShareIcon from '@mui/icons-material/IosShare';
+import { Chip } from "@mui/material";
 
-function ProfileListItem({ profile: { name, author, description } }) {  
+function ProfileListItem({ status, profile: { name, author, description } }) {  
   return (
     <ListItem
       disableGutters
       secondaryAction={
-        <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          {status.profile === name && (
+            <Chip sx={{ mr: 1 }} size="small" label="Active" variant="filled" color="success" />
+          )}
           <Tooltip title="Export & Share" placement="top" arrow>
             <IconButton color="primary" sx={{ mr: 1 }}>
               <IosShareIcon />
             </IconButton>
           </Tooltip>
           <Tooltip title="Delete Profile" placement="top" arrow>
-            <IconButton color="primary" sx={{ mr: 1 }}>
-              <DeleteOutlineOutlinedIcon />
-            </IconButton>
-          </Tooltip>
+              <IconButton color="primary" sx={{ mr: 1 }} disabled={status.profile === name}>
+                <DeleteOutlineOutlinedIcon />
+              </IconButton>
+            </Tooltip>
         </Box>
       }
     >
       <ListItemText
-        primary={name}
+        primary={(
+          <Typography variant="body1">
+            {name} <Typography variant="caption" color="text.secondary">by <i>{author}</i></Typography>
+          </Typography>
+        )}
         secondary={description}
         secondaryTypographyProps={{
           style: {
             whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            maxWidth: 'calc(100vw - 165px)',
+            maxWidth: 'calc(100vw - 225px)',
           }
         }}
       />
@@ -51,7 +59,7 @@ function ProfileListItem({ profile: { name, author, description } }) {
   );
 }
 
-const Profiles = ({profiles}) => {
+const Profiles = ({status, profiles}) => {
   const [profileSearchValue, setProfileSearchValue] = useState('');
 
   return (
@@ -101,7 +109,7 @@ const Profiles = ({profiles}) => {
         },
       }}>
         {profiles.filter(p => profileSearchValue === "" || p.name.toLowerCase().includes(profileSearchValue.toLowerCase())).map((profile) => (
-          <ProfileListItem key={profile.name} profile={profile} />
+          <ProfileListItem status={status} key={profile.name} profile={profile} />
         ))}
       </List>
     </Box>
