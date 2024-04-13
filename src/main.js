@@ -71,9 +71,6 @@ const toggleWindow = () => {
     mainWindow.hide();
   });
 
-  // Hide the menu bar
-  // mainWindow.setMenuBarVisibility(false);
-
   // Make links open in browser.
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);

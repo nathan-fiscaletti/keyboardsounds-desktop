@@ -25,9 +25,10 @@ import StopIcon from "@mui/icons-material/Stop";
 import CircularProgress from "@mui/material/CircularProgress";
 import GavelIcon from "@mui/icons-material/Gavel";
 import LibraryMusicIcon from "@mui/icons-material/LibraryMusic";
-import SettingsIcon from "@mui/icons-material/Settings";
+import BuildCircleIcon from '@mui/icons-material/BuildCircle';
 import MonitorHeartIcon from "@mui/icons-material/MonitorHeart";
 import GitHubIcon from "@mui/icons-material/GitHub";
+import InfoIcon from "@mui/icons-material/Info";
 import { IconButton, Typography, Link } from "@mui/material";
 
 import { execute } from './execute';
@@ -223,7 +224,7 @@ function App() {
     }
   };
 
-  const [selectedTab, setSelectedTab] = useState(2);
+  const [selectedTab, setSelectedTab] = useState(0);
 
   return (
     <ThemeProvider theme={theme}>
@@ -292,11 +293,21 @@ function App() {
           <Tooltip title="Status" arrow><Tab icon={<MonitorHeartIcon />} /></Tooltip>
           <Tooltip title="Profiles" arrow><Tab icon={<LibraryMusicIcon />} /></Tooltip>
           <Tooltip title="Application Rules" arrow><Tab icon={<GavelIcon />} /></Tooltip>
-          <Tooltip title="Settings" arrow><Tab icon={<SettingsIcon />} /></Tooltip>
+          <Tooltip title="About" arrow><Tab icon={<InfoIcon />} /></Tooltip>
         </Tabs>
 
         {selectedTab === 0 && (
-          <Status status={status} statusLoaded={statusLoaded} />
+          <Status 
+            statusLoaded={statusLoaded}
+            status={status}
+            profilesLoaded={profilesLoaded}
+            profiles={profiles}
+            selectedProfile={selectedProfile} 
+            displayVolume={displayVolume}
+            onProfileChanged={handleProfileChanged}
+            onVolumeChanged={setVolume}
+            onDisplayVolumeChanged={setDisplayVolume}
+          />
         )}
 
         {selectedTab === 1 && (
@@ -308,17 +319,7 @@ function App() {
         )}
 
         {selectedTab === 3 && (
-          <Settings 
-            statusLoaded={statusLoaded}
-            status={status}
-            profilesLoaded={profilesLoaded}
-            profiles={profiles}
-            selectedProfile={selectedProfile} 
-            displayVolume={displayVolume}
-            onProfileChanged={handleProfileChanged}
-            onVolumeChanged={setVolume}
-            onDisplayVolumeChanged={setDisplayVolume}
-          />
+          <Settings statusLoaded={statusLoaded} status={status} />
         )}
 
       </Card>

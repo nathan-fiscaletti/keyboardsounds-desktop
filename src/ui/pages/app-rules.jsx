@@ -41,7 +41,7 @@ const AppRule = ({ rule }) => {
     <ListItem
       key={rule.app_path}
       sx={{
-        borderRadius: 2,
+        borderRadius: 1,
         mb: 1,
         bgcolor: "background.default",
         pl: 2,
@@ -188,7 +188,7 @@ const AppRules = ({ appRules, appRulesLoaded }) => {
         <List
           sx={{
             overflow: "auto",
-            maxHeight: "calc(100vh - 275px)",
+            maxHeight: "calc(100vh - 338px)",
             pr: 2,
             "&::-webkit-scrollbar": {
               width: "8px",

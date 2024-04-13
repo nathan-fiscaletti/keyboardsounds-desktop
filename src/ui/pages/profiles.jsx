@@ -15,6 +15,7 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import IosShareIcon from '@mui/icons-material/IosShare';
+import FileOpenIcon from '@mui/icons-material/FileOpenOutlined';
 import { Chip } from "@mui/material";
 
 function ProfileListItem({ statusLoaded, status, profile: { name, author, description } }) {  
@@ -39,7 +40,7 @@ function ProfileListItem({ statusLoaded, status, profile: { name, author, descri
         </Box>
       }
       sx={{
-        borderRadius: 2,
+        borderRadius: 1,
         mb: 1,
         bgcolor: "background.default",
         pl: 2,
@@ -86,7 +87,7 @@ const Profiles = ({statusLoaded, status, profilesLoaded, profiles}) => {
         }}
       >
         <Typography variant="h6">Profiles</Typography>
-        <Button variant="outlined" size="small" startIcon={<AddIcon />}>
+        <Button variant="outlined" size="small" startIcon={<FileOpenIcon />}>
           Import
         </Button>
       </Box>
@@ -113,8 +114,8 @@ const Profiles = ({statusLoaded, status, profilesLoaded, profiles}) => {
       </Box>
       <List sx={{
         overflow: 'auto',
-        pr: 1, 
-        maxHeight: 'calc(100vh - 278px)',
+        pr: 2, 
+        maxHeight: 'calc(100vh - 338px)',
         '&::-webkit-scrollbar': {
           width: '8px',
         },

@@ -1,8 +1,22 @@
 import React from "react";
 
-import { Box, Typography, Alert, TextField } from "@mui/material";
+import green from "@mui/material/colors/green";
 
-const Status = ({ status, statusLoaded }) => {
+import { Box, Typography, FormControl, Select, Slider, MenuItem, Tooltip, IconButton, Divider } from "@mui/material";
+
+import VolumeOffIcon from "@mui/icons-material/VolumeOff";
+
+const Status = ({
+    statusLoaded,
+    status,
+    profilesLoaded,
+    profiles,
+    selectedProfile,
+    displayVolume,
+    onProfileChanged,
+    onVolumeChanged,
+    onDisplayVolumeChanged,
+}) => {
   return (
     <Box
       sx={{
@@ -17,7 +31,7 @@ const Status = ({ status, statusLoaded }) => {
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-between",
-          borderRadius: 2,
+          borderRadius: 1,
           p: 2,
           bgcolor: "background.default",
         }}
@@ -36,19 +50,96 @@ const Status = ({ status, statusLoaded }) => {
             !statusLoaded
               ? "HighlightText"
               : status.status === "running"
-              ? "green"
+              ? green[500]
               : "red"
           }
         >
           {statusLoaded ? status.user_status : "Loading..."}
         </Typography>
       </Box>
-
+      <Divider sx={{ mt: 2 }} />
+      <Typography variant="h6" sx={{ mt: 2 }}>
+          Configuration
+      </Typography>
+      <Box
+        sx={{
+          borderRadius: 1,
+          p: 2,
+          mt: 2,
+          bgcolor: "background.default",
+        }}
+      >
+      <Typography
+        variant="body1"
+        sx={{
+            fontWeight: "bold",
+            mb: 2,
+        }}
+      >
+        Profile
+      </Typography>
+      <FormControl size="small" fullWidth>
+        <Select
+          labelId="profile-select-label"
+          value={selectedProfile}
+          onChange={onProfileChanged}
+        >
+          {profilesLoaded && profiles.map((profile) => (
+            <MenuItem key={profile.name} value={profile.name}>
+              {profile.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      <Typography
+        variant="body1"
+        sx={{
+            mt: 3,
+            fontWeight: "bold",
+        }}
+      >
+        Volume
+      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
+        <Slider
+          size="small"
+          defaultValue={70}
+          aria-label="Small"
+          valueLabelDisplay="off"
+          value={displayVolume}
+          onChange={(event, value) => onDisplayVolumeChanged(value)}
+          onChangeCommitted={(event, value) => onVolumeChanged(value)}
+          sx={{
+            ml: 1,
+            mr: 1,
+          }}
+        />
+        <Tooltip title="Mute" placement="top">
+          <IconButton
+            sx={{
+              pl: 1,
+              pr: 1,
+            }}
+          >
+            <VolumeOffIcon />
+          </IconButton>
+        </Tooltip>
+      </Box>
+      </Box>
+      <Typography variant="h6" sx={{ mt: 2 }}>
+          Status Details
+      </Typography>
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
-          borderRadius: 2,
+          borderRadius: 1,
           mt: 2,
           p: 2,
           bgcolor: "background.default",
@@ -166,33 +257,6 @@ const Status = ({ status, statusLoaded }) => {
               : "N/A"}
           </Typography>
         </Box>
-      </Box>
-
-      <Box sx={{
-        mt: 2,
-        borderRadius: 2,
-        p: 2,
-        bgcolor: "background.default",
-        minHeight: "calc(100vh - 478px)",
-      }}>
-        <Typography variant="h6">Sound Test</Typography>
-        <Alert
-            severity="info"
-            variant="outlined"
-            sx={{
-            mb: 2,
-            mt: 1,
-            }}
-        >
-            Test the selected profile by typing in this box. Keyboard Sounds must be running to test.
-        </Alert>
-        <TextField
-            multiline
-            placeholder="Type here..."
-            fullWidth
-            disabled={!statusLoaded || status.status !== 'running'}
-            rows={5.6}
-        />
       </Box>
     </Box>
   );
