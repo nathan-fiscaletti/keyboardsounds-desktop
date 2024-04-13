@@ -73,35 +73,43 @@ const Profiles = ({statusLoaded, status, profilesLoaded, profiles}) => {
   return (
     <Box sx={{
       ml: 2,
-      pt: 2,
+      mt: 2,
     }}>
-      <Typography variant="h6">Profiles</Typography>
-      <Box sx={{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: "center",
-        justifyContent: "space-between",
-        mr: 2,
-        mt: 1,
-      }}>
-        <TextField
-          label="Search"
-          size="small"
-          value={profileSearchValue}
-          onChange={
-            e => setProfileSearchValue(e.target.value)
-          }
-          InputProps={{
-            endAdornment: <InputAdornment position="end"><SearchIcon /></InputAdornment>,
-          }} />
-        <Button
-          variant="outlined"
-          sx={{
-            mt: 1,
-            mb: 1,
-          }}
-          startIcon={<AddIcon />}
-        >Import</Button>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          mr: 2,
+          mb: 2,
+        }}
+      >
+        <Typography variant="h6">Profiles</Typography>
+        <Button variant="outlined" size="small" startIcon={<AddIcon />}>
+          Import
+        </Button>
+      </Box>
+      <Typography variant="body2" color="GrayText" sx={{ mb: 1, mt: 1, mr: 2 }}>
+        Manage your keyboard sound profiles here. You can import, export, and delete profiles.
+      </Typography>
+      <Box sx={{ pr: 2 }}>
+      <TextField
+        label="Search"
+        size="small"
+        fullWidth
+        sx={{
+          mt: 1,
+          mb: 1,
+        }}
+        value={profileSearchValue}
+        onChange={
+          e => setProfileSearchValue(e.target.value)
+        }
+        InputProps={{
+          endAdornment: <InputAdornment position="end"><SearchIcon /></InputAdornment>,
+        }}
+      />
       </Box>
       <List sx={{
         overflow: 'auto',

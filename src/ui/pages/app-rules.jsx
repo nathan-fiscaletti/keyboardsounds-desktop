@@ -153,7 +153,7 @@ const AppRules = ({ appRules, appRulesLoaded }) => {
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-between",
-          mr: 3,
+          mr: 2,
           mb: 2,
         }}
       >
