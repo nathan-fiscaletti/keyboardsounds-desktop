@@ -1,8 +1,11 @@
 import { Socket } from "net";
-import { BrowserWindow, shell } from 'electron';
+import { BrowserWindow, shell, dialog } from 'electron';
 import { exec } from 'child_process';
 
 const kbs = {
+    mainWindow: null,
+    openFileDialogIsOpen: false,
+
     exec: function (cmd, print=true) {
         return new Promise((resolve, reject) => {
             if (print) {
@@ -75,6 +78,57 @@ const kbs = {
         });
     },
 
+    checkForUpdate: async function() {
+        // TODO: Update to keyboardsounds-desktop
+        return fetch("https://api.github.com/repos/nathan-fiscaletti/framecast/releases/latest")
+            .then(res => res.json())
+            .then(release => {
+                if (release.tag_name !== `3,0`) {
+                    return release
+                }
+
+                return null;
+            })
+            .catch(err => { console.log(err) });
+    },
+
+    importProfile: async function() {
+        if (this.openFileDialogIsOpen) {
+            return;
+        }
+
+        this.openFileDialogIsOpen = true;
+        const res = await dialog.showOpenDialog(this.mainWindow, {
+            properties: ['openFile'],
+            filters: [
+                { name: 'Keyboard Sounds Profile', extensions: ['zip'] }
+            ]
+        });
+        if (!res.canceled) {
+            await this.exec(`add-profile --zip "${res.filePaths[0]}"`);
+        }
+        this.openFileDialogIsOpen = false;
+    },
+
+    selectExecutableFile: async function() {
+        if (this.openFileDialogIsOpen) {
+            return;
+        }
+
+        this.openFileDialogIsOpen = true;
+        const res = await dialog.showOpenDialog(this.mainWindow, {
+            properties: ['openFile'],
+            filters: [
+                { name: 'Executable', extensions: ['exe'] }
+            ]
+        });
+        this.openFileDialogIsOpen = false;
+        if (!res.canceled) {
+            return res.filePaths[0];
+        }
+        return "";
+    },
+
     executeDaemonCommand: async function(command) {
         const status = await this.status();
         if (status.status !== 'running') {
@@ -111,6 +165,10 @@ const kbs = {
                 reject(err);
             });
         });
+    },
+
+    setMainWindow: function (mainWindow) {
+        this.mainWindow = mainWindow;
     },
 
     registerKbsIpcHandler: function (ipcMain) {

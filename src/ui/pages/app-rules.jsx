@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { useState } from "react";
 
@@ -15,11 +15,18 @@ import {
   CircularProgress,
   TextField,
   InputAdornment,
+  Dialog,
+  Select,
+  MenuItem,
+  FormControl,
 } from "@mui/material";
 
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
+import CloseIcon from "@mui/icons-material/Close";
+import FileOpenIcon from '@mui/icons-material/FileOpen';
+import SaveIcon from '@mui/icons-material/Save';
 
 import { execute } from '../execute';
 
@@ -140,6 +147,39 @@ const AppRules = ({ appRules, appRulesLoaded }) => {
     }
   });
 
+  const [addAppRuleDialogOpen, setAddAppRuleDialogOpen] = useState(false);
+  const [selectedRule, setSelectedRule] = useState("disable");
+  const [selectedApplication, setSelectedApplication] = useState("");
+  const [addingRule, setAddingRule] = useState(false);
+
+  useEffect(() => {
+    if (!addAppRuleDialogOpen) {
+      setSelectedRule("disable");
+      setSelectedApplication("");
+    }
+  }, [addAppRuleDialogOpen]);
+
+  const selectExecutableFile = () => {
+    execute("selectExecutableFile").then((path) => {
+      if (path) {
+        setSelectedApplication(path);
+      }
+    });
+  };
+
+  const saveRule = () => {
+    if (selectedApplication === "") {
+      return;
+    }
+
+    setAddingRule(true);
+    execute(`add-rule --app "${selectedApplication}" --rule ${selectedRule}`)
+      .then(() => {
+        setAddingRule(false);
+        setAddAppRuleDialogOpen(false);
+      });
+  };
+
   return (
     <Box
       sx={{
@@ -147,6 +187,146 @@ const AppRules = ({ appRules, appRulesLoaded }) => {
         mt: 2,
       }}
     >
+      <Dialog open={addAppRuleDialogOpen} fullWidth>
+        <Box sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          p: 2,
+        }}>
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
+            <Typography variant="h6">Add Application Rule</Typography>
+            <IconButton onClick={() => setAddAppRuleDialogOpen(false)}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          <Typography variant="body" sx={{ mt: 2 }}>
+            Application
+          </Typography>
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            width: '100%',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: 1,
+            alignItems: 'center',
+            mt: 1,
+            p: 1,
+          }}>
+            {selectedApplication !== "" && (
+              <Tooltip title={selectedApplication} followCursor>
+                <Typography variant="body2" color="GrayText" noWrap sx={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  maxWidth: "calc(100vw - 250px)",
+                }}>
+                  {selectedApplication}
+                </Typography>
+              </Tooltip>
+            )}
+            {selectedApplication === "" && (
+              <Typography variant="body2" color="GrayText">
+                Select an application...
+              </Typography>
+            )}
+
+            <Button
+              startIcon={<FileOpenIcon />}
+              variant="outlined"
+              size="small"
+              sx={{ ml: 1 }}
+              onClick={selectExecutableFile}
+            >
+              Select
+            </Button>
+          </Box>
+          <Typography
+            variant="body1"
+            sx={{
+              mt: 2,
+              mb: 1,
+            }}
+          >
+            Rule
+          </Typography>
+          <FormControl size="small" fullWidth>
+            <Select
+              value={selectedRule}
+              onChange={(e) => setSelectedRule(e.target.value)}
+              renderValue={(v) => (
+                <Typography variant="button">
+                  {v === "disable"
+                    ? "Disable"
+                    : v === "enable"
+                    ? "Enable"
+                    : "Exclusive"}
+                </Typography>
+              )}
+            >
+              <MenuItem value="disable" selected>
+                <Box sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}>
+                  <Typography variant="button">Disable</Typography>
+                  <Typography variant="caption" color="GrayText">
+                    Disables the sound daemon when this application gains focus.
+                  </Typography>
+                </Box>
+              </MenuItem>
+              <MenuItem value="enable">
+                <Box sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}>
+                  <Typography variant="button">Enable</Typography>
+                  <Typography variant="caption" color="GrayText">
+                    Enables the sound daemon when this application gains focus.
+                  </Typography>
+                </Box>
+              </MenuItem>
+              <MenuItem value="exclusive">
+                <Box sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}>
+                  <Typography variant="button">Exclusive</Typography>
+                  <Typography variant="caption" color="GrayText">
+                    Enables the sound daemon ONLY when this application gains focus.
+                  </Typography>
+                  <Typography variant="caption" color="GrayText">
+                    (There can only be one EXCLUSIVE rule at a time.)
+                  </Typography>
+                </Box>
+              </MenuItem>
+            </Select>
+          </FormControl>
+
+          <Button
+            fullWidth
+            variant="contained"
+            startIcon={
+              addingRule ? (
+                <CircularProgress size={18} />
+              ) : (
+                <SaveIcon />
+              )
+            }
+            sx={{ mt: 3, }}
+            disabled={selectedApplication === "" || addingRule}
+            onClick={saveRule}
+          >
+            Save
+          </Button>
+        </Box>
+      </Dialog>
+
       <Box
         sx={{
           display: "flex",
@@ -158,7 +338,7 @@ const AppRules = ({ appRules, appRulesLoaded }) => {
         }}
       >
         <Typography variant="h6">Application Rules</Typography>
-        <Button variant="outlined" size="small" startIcon={<AddIcon />}>
+        <Button variant="outlined" size="small" startIcon={<AddIcon />} onClick={() => setAddAppRuleDialogOpen(true)}>
           Add Rule
         </Button>
       </Box>

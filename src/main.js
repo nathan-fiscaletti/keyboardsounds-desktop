@@ -3,7 +3,7 @@ const path = require('node:path');
 
 import { kbs } from './api/core';
 
-import APP_ICO from './app.ico';
+import APP_ICO from './app_icon.png';
 const APP_NAME = "Keyboard Sounds";
 
 const AppIcon = path.join(__dirname, APP_ICO);
@@ -68,7 +68,9 @@ const toggleWindow = () => {
 
   // Close the window when it loses focus.
   mainWindow.on('blur', () => {
-    mainWindow.hide();
+    if (!kbs.openFileDialogIsOpen) {
+      mainWindow.hide();
+    }
   });
 
   // Make links open in browser.
@@ -77,14 +79,21 @@ const toggleWindow = () => {
     return { action: 'deny' };
   });
 
+  // Set the main window for use with the IPC handlers
+  kbs.setMainWindow(mainWindow);
+
   // Load IPC handlers
   kbs.registerKbsIpcHandler(ipcMain);
   kbs.registerStatusMonitor(ipcMain);
   kbs.registerAppRulesMonitor(ipcMain);
   kbs.registerProfilesMonitor(ipcMain);
 
+
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+
+  // Open developer tools
+  // mainWindow.webContents.openDevTools();
 
   // Dereference the window object when the window is 
   // closed to free up memory.
@@ -125,7 +134,11 @@ app.whenReady().then(() => {
   // Create a system tray icon and context menu for the application.
   tray = new Tray(AppIcon);
   const contextMenu = Menu.buildFromTemplate([
-    { label: 'Quit', type: 'normal', click: () => app.quit()},
+    { label: 'Quit', type: 'normal', click: () => {
+      kbs.exec('stop').finally(() => {
+        process.exit(0);
+      });
+    }},
   ]);
   tray.setToolTip(APP_NAME);
   tray.setContextMenu(contextMenu);

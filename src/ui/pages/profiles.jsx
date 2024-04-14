@@ -16,9 +16,12 @@ import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import FileOpenIcon from '@mui/icons-material/FileOpenOutlined';
-import { Chip } from "@mui/material";
+import { Chip, CircularProgress } from "@mui/material";
+import { execute } from "../execute";
 
 function ProfileListItem({ statusLoaded, status, profile: { name, author, description } }) {  
+  const [isDeleting, setIsDeleting] = useState(false);
+
   return (
     <ListItem
       disableGutters
@@ -32,11 +35,28 @@ function ProfileListItem({ statusLoaded, status, profile: { name, author, descri
               <IosShareIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Delete Profile" placement="top" arrow>
-              <IconButton color="primary" sx={{ mr: 1 }} disabled={status.profile === name}>
-                <DeleteOutlineOutlinedIcon />
-              </IconButton>
+
+          {isDeleting && (
+            <CircularProgress size={18} sx={{mr: 2, ml: 1}} />
+          )}
+
+          {!isDeleting && (
+            <Tooltip title="Delete Profile" placement="top" arrow>
+                <IconButton
+                  color="primary"
+                  sx={{ mr: 1 }}
+                  disabled={status.profile === name}
+                  onClick={() => {
+                    setIsDeleting(true);
+                    execute(`remove-profile --name "${name}"`, (_) => {
+                      setIsDeleting(false);
+                    });
+                  }}
+                >
+                  <DeleteOutlineOutlinedIcon />
+                </IconButton>
             </Tooltip>
+          )}
         </Box>
       }
       sx={{
@@ -46,6 +66,17 @@ function ProfileListItem({ statusLoaded, status, profile: { name, author, descri
         pl: 2,
       }}
     >
+      <Tooltip followCursor title={(
+        <Box sx={{
+          display: 'flex',
+          flexDirection: 'column',
+        }}>
+          <Typography variant="body1">
+            {name} <Typography variant="caption" color="text.secondary">by <i>{author}</i></Typography>
+          </Typography>
+          <Typography variant="caption" color="text.secondary">{description}</Typography>
+        </Box>
+      )}>
       <ListItemText
         primary={(
           <Typography variant="body1">
@@ -60,10 +91,11 @@ function ProfileListItem({ statusLoaded, status, profile: { name, author, descri
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
-            maxWidth: 'calc(100vw - 225px)',
+            maxWidth: 'calc(100vw - 275px)',
           }
         }}
       />
+      </Tooltip>
     </ListItem>
   );
 }
@@ -87,7 +119,12 @@ const Profiles = ({statusLoaded, status, profilesLoaded, profiles}) => {
         }}
       >
         <Typography variant="h6">Profiles</Typography>
-        <Button variant="outlined" size="small" startIcon={<FileOpenIcon />}>
+        <Button
+          variant="outlined"
+          size="small"
+          startIcon={<FileOpenIcon />}
+          onClick={() => execute("importProfile")}
+        >
           Import
         </Button>
       </Box>

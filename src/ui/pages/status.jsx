@@ -5,6 +5,7 @@ import green from "@mui/material/colors/green";
 import { Box, Typography, FormControl, Select, Slider, MenuItem, Tooltip, IconButton, Divider } from "@mui/material";
 
 import VolumeOffIcon from "@mui/icons-material/VolumeOff";
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 
 const Status = ({
     statusLoaded,
@@ -80,7 +81,6 @@ const Status = ({
       </Typography>
       <FormControl size="small" fullWidth>
         <Select
-          labelId="profile-select-label"
           value={selectedProfile}
           onChange={onProfileChanged}
         >
@@ -120,14 +120,19 @@ const Status = ({
             mr: 1,
           }}
         />
-        <Tooltip title="Mute" placement="top">
+        <Tooltip title={displayVolume > 0 ? "Mute" : "Un-mute"} placement="top">
           <IconButton
             sx={{
               pl: 1,
               pr: 1,
             }}
+            onClick={() => {
+                onDisplayVolumeChanged(displayVolume > 0 ? 0 : 25)
+                onVolumeChanged(displayVolume > 0 ? 0 : 25)
+            }}
+            color={displayVolume > 0 ? "primary" : "error"}
           >
-            <VolumeOffIcon />
+            {displayVolume > 0 ? <VolumeUpIcon /> : <VolumeOffIcon />}
           </IconButton>
         </Tooltip>
       </Box>
