@@ -84,7 +84,6 @@ const Settings = ({ statusLoaded, status }) => {
     setCheckingForUpdate(true);
     execute("checkForUpdate").then((release) => {
       if (release) {
-        console.log(release);
         setIsUpdateAvailable(true);
         setUpdate(release);
       }

@@ -98,12 +98,13 @@ function ControlButton({
 }
 
 function App() {
-  // Listen for status updates from the main process.
+  const [isLoading, setIsLoading] = useState(false);
+
   const [volume, setVolume] = useState(0);
   const [displayVolume, setDisplayVolume] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+
   const [selectedProfile, setSelectedProfile] = useState('');
-  
+
   const [status, setStatus] = useState(null);
   const [statusLoaded, setStatusLoaded] = useState(false);
 
@@ -112,6 +113,19 @@ function App() {
 
   const [profiles, setProfiles] = useState([]);
   const [profilesLoaded, setProfilesLoaded] = useState(false);
+
+  // Load the profile and volume from the backend
+  useEffect(() => {
+    const run = async () => {
+      const volume = await execute("getVolume");
+      const profile = await execute("getProfile");
+
+      setVolume(volume);
+      setDisplayVolume(volume);
+      setSelectedProfile(profile);
+    };
+    run();
+  }, []);
 
   useEffect(() => {
     const removeStatusListener = window.kbs.receive(
@@ -161,10 +175,6 @@ function App() {
     if(!appRulesLoaded && appRules.length > 0) {
       setAppRulesLoaded(true);
     }
-
-    if (appRules.length > 0) {
-      console.log(appRules);
-    }
   }, [appRules]);
 
   useEffect(() => {
@@ -187,16 +197,11 @@ function App() {
         setSelectedProfile(profiles[0].name);
       }
     }
-
-    if (profiles.length > 0) {
-      console.log(profiles);
-    }
   }, [profiles]);
 
   useEffect(() => {
     const run = async () => {
       if (statusLoaded && status.status === "running") {
-        console.log(`setVolume ${volume}`);
         await execute(`setVolume ${volume}`);
       }
     };
@@ -218,10 +223,16 @@ function App() {
   };
 
   const handleProfileChanged = (event) => {
+    execute(`storeProfile ${event.target.value}`);
     setSelectedProfile(event.target.value);
     if (statusLoaded && status.status === "running") {
       execute(`setProfile ${event.target.value}`).then((_) => {});
     }
+  };
+
+  const handleVolumeChanged = (volume) => {
+    execute(`storeVolume ${volume}`);
+    setVolume(volume);
   };
 
   const [selectedTab, setSelectedTab] = useState(0);
@@ -305,7 +316,7 @@ function App() {
             selectedProfile={selectedProfile} 
             displayVolume={displayVolume}
             onProfileChanged={handleProfileChanged}
-            onVolumeChanged={setVolume}
+            onVolumeChanged={handleVolumeChanged}
             onDisplayVolumeChanged={setDisplayVolume}
           />
         )}

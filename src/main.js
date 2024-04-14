@@ -79,6 +79,13 @@ const toggleWindow = () => {
     return { action: 'deny' };
   });
 
+  mainWindow.webContents.on("before-input-event", (event, input) => { 
+    if(input.code=='F4' && input.alt) {
+      event.preventDefault();
+      mainWindow.hide();
+    }
+  });
+
   // Set the main window for use with the IPC handlers
   kbs.setMainWindow(mainWindow);
 

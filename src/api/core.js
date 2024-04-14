@@ -2,6 +2,10 @@ import { Socket } from "net";
 import { BrowserWindow, shell, dialog } from 'electron';
 import { exec } from 'child_process';
 
+import Store from 'electron-store';
+
+const store = new Store();
+
 const kbs = {
     mainWindow: null,
     openFileDialogIsOpen: false,
@@ -9,7 +13,7 @@ const kbs = {
     exec: function (cmd, print=true) {
         return new Promise((resolve, reject) => {
             if (print) {
-                console.log(`Executing: kbs ${cmd}`);
+                console.log(`executing: kbs ${cmd}`);
             }
 
             exec(`kbs ${cmd}`, (err, stdout, stderr) => {
@@ -143,11 +147,27 @@ const kbs = {
         });
     },
 
+    getVolume: async function() {
+        return Promise.resolve(store.get('volume', 75));
+    },
+
+    storeVolume: async function(volume) {
+        store.set('volume', Number(volume));
+    },
+
     setVolume: async function(volume) {
         return this.executeDaemonCommand({
             action: 'set_volume',
             volume: Number(volume)
         });
+    },
+
+    getProfile: async function() {
+        return Promise.resolve(store.get('profile', ''));
+    },
+
+    storeProfile: async function(profile) {
+        store.set('profile', profile);
     },
 
     setProfile: async function(profile) {
