@@ -38,7 +38,7 @@ jobs:
           out/make/squirrel.windows/x64/RELEASES
           out/make/squirrel.windows/x64/kbs_electron-${{ github.event.release.tag_name }}-full.nupkg
           out/make/squirrel.windows/x64/Keyboard Sounds-${{ github.event.release.tag_name }} Setup.exe
-          out/make/squirrel.windows/x64/Keyboard Sounds.msi
-          out/make/squirrel.windows/x64/Keyboard Sounds.wixobj
-          out/make/squirrel.windows/x64/Keyboard Sounds.wixpdb
-          out/make/squirrel.windows/x64/Keyboard Sounds.wxs
+          out/make/wix/x64/Keyboard Sounds.msi
+          out/make/wix/x64/Keyboard Sounds.wixobj
+          out/make/wix/x64/Keyboard Sounds.wixpdb
+          out/make/wix/x64/Keyboard Sounds.wxs
