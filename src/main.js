@@ -1,12 +1,11 @@
 const { app, ipcMain, shell, BrowserWindow, Menu, Tray, screen, dialog } = require('electron');
+const a = require('electron-squirrel-startup');
+if (a) process.exit(0);
+
 const path = require('node:path');
 
 import { kbs } from './api/core';
 import APP_ICO from './app_icon.png';
-
-if (require('electron-squirrel-startup')) {
-  process.exit(0);
-}
 
 const APP_NAME = "Keyboard Sounds";
 const AppIcon = path.join(__dirname, APP_ICO);
@@ -14,11 +13,6 @@ const AppIcon = path.join(__dirname, APP_ICO);
 // Initialize variables to hold the tray and window objects.
 let tray = null;
 let mainWindow = null;
-
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require('electron-squirrel-startup')) {
-  app.quit();
-}
 
 const toggleWindow = () => {
   // Check if the window exists and isn't destroyed; if so,
@@ -89,6 +83,8 @@ const toggleWindow = () => {
     }
   });
 
+  kbs.appVersion = app.getVersion();
+
   // Set the main window for use with the IPC handlers
   kbs.setMainWindow(mainWindow);
 
@@ -118,7 +114,7 @@ const toggleWindow = () => {
 app.whenReady().then(() => {
   // Verify that Keyboard Sounds back-end is installed and functioning.
   kbs.checkInstallation().then(() => {
-    kbs.version().then(version => {
+    kbs.getBackendVersion().then(version => {
       console.log(`Found Keyboard Sounds backend installation with version: ${version}`);
     }).catch((err) => {
       console.error('Failed to get Keyboard Sounds backend version:', err);

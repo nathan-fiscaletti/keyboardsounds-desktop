@@ -9,6 +9,7 @@ const store = new Store();
 const kbs = {
     mainWindow: null,
     openFileDialogIsOpen: false,
+    appVersion: '1.0.0',
 
     exec: function (cmd, print=true) {
         return new Promise((resolve, reject) => {
@@ -27,7 +28,7 @@ const kbs = {
         });
     },
 
-    version: function () {
+    getBackendVersion: function () {
         return this.exec('--version');
     },
 
@@ -82,6 +83,10 @@ const kbs = {
         });
     },
 
+    getAppVersion: function() {
+        return Promise.resolve(this.appVersion);
+    },
+
     getGlobalAction: function() {
         return new Promise((resolve, reject) => {
             this.exec('get-global-rule --short', false).then((stdout) => {
@@ -103,10 +108,10 @@ const kbs = {
 
     checkForUpdate: async function() {
         // TODO: Update to keyboardsounds-desktop
-        return fetch("https://api.github.com/repos/nathan-fiscaletti/framecast/releases/latest")
+        return fetch("https://api.github.com/repos/nathan-fiscaletti/keyboardsounds/releases/latest")
             .then(res => res.json())
             .then(release => {
-                if (release.tag_name !== `3,0`) {
+                if (release.tag_name !== this.appVersion) {
                     return release
                 }
 
@@ -202,7 +207,7 @@ const kbs = {
 
     checkInstallation: function () {
         return new Promise((resolve, reject) => {
-            this.version().then(_ => {
+            this.getBackendVersion().then(_ => {
                 resolve();
             }).catch((err) => {
                 reject(err);

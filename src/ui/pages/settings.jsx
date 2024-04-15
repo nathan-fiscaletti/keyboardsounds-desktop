@@ -74,7 +74,7 @@ const AboutItem = ({ icon, title, value, first }) => {
   );
 };
 
-const Settings = ({ statusLoaded, status }) => {
+const Settings = ({ appVersion, backEndVersion }) => {
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [update, setUpdate] = useState(null);
   const [checkingForUpdate, setCheckingForUpdate] = useState(false);
@@ -89,14 +89,9 @@ const Settings = ({ statusLoaded, status }) => {
       }
 
       setCheckingForUpdate(false);
+      setUpdateDialogOpen(true);
     });
   };
-
-  useEffect(() => {
-    if (isUpdateAvailable) {
-      setUpdateDialogOpen(true);
-    }
-  }, [isUpdateAvailable]);
 
   useEffect(() => {
     if (!updateDialogOpen) {
@@ -256,13 +251,13 @@ const Settings = ({ statusLoaded, status }) => {
         <AboutItem
           icon={<CheckCircleOutlineIcon fontSize="small" color="disabled" />}
           title="App Version"
-          value="1.0.0"
+          value={appVersion}
           first
         />
         <AboutItem
           icon={<StorageIcon fontSize="small" color="disabled" />}
           title="Backend Version"
-          value="5.7.0"
+          value={backEndVersion}
         />
         <AboutItem
           icon={<PersonOutlineIcon fontSize="small" color="disabled" />}

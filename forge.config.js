@@ -12,6 +12,13 @@ module.exports = {
       config: {},
     },
     {
+      name: '@electron-forge/maker-wix',
+      config: {
+        language: 1033,
+        manufacturer: 'Nathan Fiscaletti'
+      }
+    },
+    {
       name: '@electron-forge/maker-zip',
       platforms: ['darwin'],
     },
@@ -23,6 +30,18 @@ module.exports = {
       name: '@electron-forge/maker-rpm',
       config: {},
     },
+  ],
+  publishers: [
+    {
+      name: '@electron-forge/publisher-github',
+      config: {
+        repository: {
+          owner: 'nathan-fiscaletti',
+          name: 'keyboardsounds'
+        },
+        prerelease: true
+      }
+    }
   ],
   plugins: [
     {

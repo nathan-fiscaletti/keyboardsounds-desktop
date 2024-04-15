@@ -117,6 +117,26 @@ function App() {
   const [globalAction, setGlobalAction] = useState('');
   const [enabledRulesAreExclusive, setEnabledRulesAreExclusive] = useState(false);
 
+  const [appVersion, setAppVersion] = useState('<unknown>');
+  const [backEndVersion, setBackEndVersion] = useState('<unknown>');
+
+  // Get the version from the backend
+  useEffect(() => {
+    const run = async () => {
+      const version = await execute("getAppVersion");
+      setAppVersion(version);
+    };
+    run();
+  }, []);
+  useEffect(() => {
+    const run = async () => {
+      const version = await execute("getBackendVersion");
+      setBackEndVersion(version);
+    };
+    run();
+  }, []);
+
+
   // Load the profile and volume from the backend
   useEffect(() => {
     const run = async () => {
@@ -359,7 +379,9 @@ function App() {
         )}
 
         {selectedTab === 3 && (
-          <Settings statusLoaded={statusLoaded} status={status} />
+          <Settings
+            appVersion={appVersion}
+            backEndVersion={backEndVersion} />
         )}
 
       </Card>
