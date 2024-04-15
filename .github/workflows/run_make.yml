@@ -31,19 +31,14 @@ jobs:
     - name: Build
       run: npm run make
     # upload files to release
-    - name: Upload Squirrel Installer
-      uses: actions/upload-release-asset@v1
+    - name: Upload Artifacts
+      uses: softprops/action-gh-release@v2
       with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: out/make/squirrel.windows/x64/Keyboard Sounds-${{ github.event.release.tag_name }} Setup.exe
-        asset_name: Keyboard Sounds-${{ github.event.release.tag_name }} Setup.exe
-        asset_content_type: application/exe
-        token: ${{ secrets.GH_TOKEN }}
-    - name: Upload WiX MSI
-      uses: actions/upload-release-asset@v1
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: out/make/squirrel.windows/x64/Keyboard Sounds.msi
-        asset_name: Keyboard Sounds-${{ github.event.release.tag_name }}.msi
-        asset_content_type: application/msi
-        token: ${{ secrets.GH_TOKEN }}
+        files: |
+          out/make/squirrel.windows/x64/RELEASES
+          out/make/squirrel.windows/x64/kbs_electron-${{ github.event.release.tag_name }}-full.nupkg
+          out/make/squirrel.windows/x64/Keyboard Sounds-${{ github.event.release.tag_name }} Setup.exe
+          out/make/squirrel.windows/x64/Keyboard Sounds.msi
+          out/make/squirrel.windows/x64/Keyboard Sounds.wixobj
+          out/make/squirrel.windows/x64/Keyboard Sounds.wixpdb
+          out/make/squirrel.windows/x64/Keyboard Sounds.wxs
