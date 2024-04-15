@@ -20,4 +20,4 @@ PS> kbs --version
 
 > Note: Currently only tested on windows.
 
-[Download Windows Installer](https://github.com/nathan-fiscaletti/keyboardsounds-desktop/releases/latest/download/Keyboard%20Sounds.msi)
+[Download Windows Installer](https://github.com/nathan-fiscaletti/keyboardsounds-desktop/releases/latest/download/Keyboard.Sounds.msi)
