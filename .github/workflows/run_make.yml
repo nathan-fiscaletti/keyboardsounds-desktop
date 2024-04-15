@@ -30,9 +30,20 @@ jobs:
     # build
     - name: Build
       run: npm run make
-    # add artifacts
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v2
+    # upload files to release
+    - name: Upload Squirrel Installer
+      uses: actions/upload-release-asset@v1
       with:
-        name: artifacts
-        path: out/make/*
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: out/make/squirrel.windows/x64/Keyboard Sounds-${{ github.event.release.tag_name }}.exe
+        asset_name: Keyboard Sounds-${{ github.event.release.tag_name }}.exe
+        asset_content_type: application/exe
+        token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload WiX MSI
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: out/make/squirrel.windows/x64/Keyboard Sounds.msi
+        asset_name: Keyboard Sounds-${{ github.event.release.tag_name }}.msi
+        asset_content_type: application/msi
+        token: ${{ secrets.GITHUB_TOKEN }}
