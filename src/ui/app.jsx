@@ -278,7 +278,7 @@ function App() {
     execute(`setGlobalAction ${isEnabled ? 'disable' : 'enable'}`);
   };
 
-  const [selectedTab, setSelectedTab] = useState(2);
+  const [selectedTab, setSelectedTab] = useState(0);
 
   return (
     <ThemeProvider theme={theme}>
