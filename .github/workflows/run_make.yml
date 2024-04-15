@@ -17,12 +17,9 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: '18'
-    # install yarn
-    - name: Install Yarn
-      run: npm install -g yarn
     # install dependencies
     - name: Install dependencies
-      run: yarn install
+      run: npm install
     # install WiX Toolset v3.14 from https://github.com/wixtoolset/wix3/releases/download/wix3141rtm/wix314-binaries.zip
     - name: Install WiX Toolset
       run: |
@@ -32,7 +29,7 @@ jobs:
         $env:Path += ';C:\Program Files\WiX Toolset v3.14'
     # build
     - name: Build
-      run: yarn make
+      run: npm run make
     # add artifacts
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
