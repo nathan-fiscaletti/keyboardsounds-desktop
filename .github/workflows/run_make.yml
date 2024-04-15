@@ -46,4 +46,4 @@ jobs:
         asset_path: out/make/squirrel.windows/x64/Keyboard Sounds.msi
         asset_name: Keyboard Sounds-${{ github.event.release.tag_name }}.msi
         asset_content_type: application/msi
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.GH_TOKEN }}
