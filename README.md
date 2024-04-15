@@ -10,12 +10,12 @@ This project is still in the very early stages of development. The goal is to cr
 
 Make sure you have [Keyboard Sounds](https://github.com/nathan-fiscaletti/keyboardsounds) installed before continuing.
 
-Version 5.7.1 or later is required.
+Version 5.7.2 or later is required.
 
 ```powershell
 PS> pip install keyboardsounds
 PS> kbs --version
-5.7.1
+5.7.2
 ```
 
 > Note: Currently only tested on windows.
