@@ -1,0 +1,41 @@
+# Create windows runner
+name: Run make
+
+# trigger on new release
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    # install node.js
+    - name: Install Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12'
+    # install yarn
+    - name: Install Yarn
+      run: npm install -g yarn
+    # install dependencies
+    - name: Install dependencies
+      run: yarn install
+    # install WiX Toolset v3.14 from https://github.com/wixtoolset/wix3/releases/download/wix3141rtm/wix314-binaries.zip
+    - name: Install WiX Toolset
+      run: |
+        Invoke-WebRequest -Uri 'https://github.com/wixtoolset/wix3/releases/download/wix3141rtm/wix314-binaries.zip' -OutFile 'wix314-binaries.zip'
+        Expand-Archive -Path 'wix314-binaries.zip' -DestinationPath 'C:\Program Files\WiX Toolset v3.14'
+        # Add WiX Toolset to PATH
+        $env:Path += ';C:\Program Files\WiX Toolset v3.14'
+    # build
+    - name: Build
+      run: yarn make
+    # add artifacts
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: artifacts
+        path: out/make/*
