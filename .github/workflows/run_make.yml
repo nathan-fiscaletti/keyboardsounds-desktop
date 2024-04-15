@@ -11,6 +11,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
+    - uses: actions/checkout@v2
     # install node.js
     - name: Install Node.js
       uses: actions/setup-node@v1
