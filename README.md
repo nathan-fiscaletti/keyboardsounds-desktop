@@ -22,6 +22,7 @@ PS> cd keyboardsounds
 PS> git checkout ui-support
 PS> pip install -r requirements.txt
 PS> pip install -e .
+PS> cd ..
 
 # Verify Installation
 PS> kbs --version
