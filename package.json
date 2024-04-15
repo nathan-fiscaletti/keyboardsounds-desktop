@@ -1,8 +1,8 @@
 {
   "name": "kbs-electron",
-  "productName": "kbs-electron",
+  "productName": "Keyboard Sounds",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "https://keyboardsounds.net/",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",

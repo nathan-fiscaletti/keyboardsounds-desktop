@@ -19,6 +19,8 @@ import {
   Select,
   MenuItem,
   FormControl,
+  Switch,
+  Divider,
 } from "@mui/material";
 
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
@@ -29,6 +31,7 @@ import FileOpenIcon from '@mui/icons-material/FileOpen';
 import SaveIcon from '@mui/icons-material/Save';
 
 import { execute } from '../execute';
+import { Info, Settings } from "@mui/icons-material";
 
 const RuleActionLabel = ({ action }) => {
   return (
@@ -133,7 +136,7 @@ const AppRule = ({ rule }) => {
   );
 };
 
-const AppRules = ({ appRules, appRulesLoaded }) => {
+const AppRules = ({ appRules, appRulesLoaded, enabledRulesAreExclusive, globalAction, onGlobalActionChanged }) => {
   const [searchValue, setSearchValue] = useState("");
 
   // Sort the app rules so that "exclusive" rules come first
@@ -363,12 +366,45 @@ const AppRules = ({ appRules, appRulesLoaded }) => {
           endAdornment: <InputAdornment position="end"><SearchIcon /></InputAdornment>,
         }}
       />
+
+      <Box sx={{
+        borderRadius: 1,
+        mb: 1,
+        // bgcolor: "background.default",
+        pt: 1,
+      }}>
+        <Box sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}>
+          <Tooltip followCursor title={(
+            <Typography variant="caption">
+              When enabled, the sound daemon will only be active for applications with "Enabled" (or "Exclusive") rules. It will be disabled for all other applications.
+            </Typography>
+          )}>
+            <Box sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              flex: 1,
+            }}>
+              <Settings color="GrayText" fontSize="small" />
+              <Typography variant="body2" sx={{ ml: 1, mt: 0.5, cursor: 'default' }}>
+                Make "Enabled" rules exclusive
+              </Typography>
+            </Box>
+          </Tooltip>
+          <Divider orientation="vertical" variant="middle" flexItem />
+          <Switch checked={enabledRulesAreExclusive} onChange={(e, c) => onGlobalActionChanged(c)} />
+        </Box>
+      </Box>
       </Box>
       {appRulesLoaded && appRules.length > 0 && (
         <List
           sx={{
             overflow: "auto",
-            maxHeight: "calc(100vh - 338px)",
+            maxHeight: "calc(100vh - 410px)",
             pr: 2,
             "&::-webkit-scrollbar": {
               width: "8px",
@@ -399,7 +435,7 @@ const AppRules = ({ appRules, appRulesLoaded }) => {
         </List>
       )}
       {(!appRulesLoaded || appRules.length < 1) && (
-        <Box sx={{ mt: 28, display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+        <Box sx={{ mt: 18, display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
           <Box sx={{
             display: 'flex',
             flexDirection: 'column',

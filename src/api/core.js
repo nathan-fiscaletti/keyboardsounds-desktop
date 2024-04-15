@@ -82,6 +82,25 @@ const kbs = {
         });
     },
 
+    getGlobalAction: function() {
+        return new Promise((resolve, reject) => {
+            this.exec('get-global-rule --short', false).then((stdout) => {
+                try {
+                    const ga = JSON.parse(stdout);
+                    resolve(ga.global_action);
+                } catch (err) {
+                    reject(err);
+                }
+            }).catch((err) => {
+                reject(err);
+            });
+        });
+    },
+
+    setGlobalAction: function(action) {
+        return this.exec(`set-global-rule --rule ${action}`);
+    },
+
     checkForUpdate: async function() {
         // TODO: Update to keyboardsounds-desktop
         return fetch("https://api.github.com/repos/nathan-fiscaletti/framecast/releases/latest")
@@ -112,6 +131,8 @@ const kbs = {
             await this.exec(`add-profile --zip "${res.filePaths[0]}"`);
         }
         this.openFileDialogIsOpen = false;
+        this.mainWindow.show();
+        this.mainWindow.focus();
     },
 
     selectExecutableFile: async function() {
@@ -127,6 +148,8 @@ const kbs = {
             ]
         });
         this.openFileDialogIsOpen = false;
+        this.mainWindow.show();
+        this.mainWindow.focus();
         if (!res.canceled) {
             return res.filePaths[0];
         }
@@ -232,6 +255,14 @@ const kbs = {
     registerAppRulesMonitor: function (ipcMain) {
         // Watch the app rules and notify the renderer process when they change
         setInterval(() => {
+            this.getGlobalAction().then((action) => {
+                BrowserWindow.getAllWindows().forEach(window => {
+                    window.webContents.send('kbs-global-action', action);
+                });
+            }).catch((err) => {
+                console.error('Failed to fetch global action:', err);
+            });
+
             this.rules().then((rules) => {
                 BrowserWindow.getAllWindows().forEach(window => {
                     window.webContents.send('kbs-app-rules', rules);

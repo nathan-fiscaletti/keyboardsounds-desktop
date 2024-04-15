@@ -2,10 +2,13 @@ const { app, ipcMain, shell, BrowserWindow, Menu, Tray, screen, dialog } = requi
 const path = require('node:path');
 
 import { kbs } from './api/core';
-
 import APP_ICO from './app_icon.png';
-const APP_NAME = "Keyboard Sounds";
 
+if (require('electron-squirrel-startup')) {
+  process.exit(0);
+}
+
+const APP_NAME = "Keyboard Sounds";
 const AppIcon = path.join(__dirname, APP_ICO);
 
 // Initialize variables to hold the tray and window objects.
@@ -153,6 +156,11 @@ app.whenReady().then(() => {
   // Allow the user to double-click the tray icon to open
   // or focus the application window.
   tray.on('click', toggleWindow);
+
+  tray.displayBalloon({
+    title: APP_NAME,
+    content: `${APP_NAME} lives in your system tray.`,
+  });
 });
 
 // Display a notification when the application is closed

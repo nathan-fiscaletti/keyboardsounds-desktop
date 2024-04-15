@@ -114,6 +114,9 @@ function App() {
   const [profiles, setProfiles] = useState([]);
   const [profilesLoaded, setProfilesLoaded] = useState(false);
 
+  const [globalAction, setGlobalAction] = useState('');
+  const [enabledRulesAreExclusive, setEnabledRulesAreExclusive] = useState(false);
+
   // Load the profile and volume from the backend
   useEffect(() => {
     const run = async () => {
@@ -140,6 +143,21 @@ function App() {
       removeStatusListener();
     };
   }, []);
+
+  useEffect(() => {
+    const removeGlobalActionListener = window.kbs.receive(
+      "kbs-global-action",
+      (newGlobalAction) => {
+        setGlobalAction(newGlobalAction);
+      }
+    );
+  }, []);
+
+  useEffect(() => {
+    if (globalAction !== '') {
+      setEnabledRulesAreExclusive(globalAction === 'disable');
+    }
+  }, [globalAction]);
 
   useEffect(() => {
     if (!statusLoaded && status !== null) {
@@ -235,7 +253,12 @@ function App() {
     setVolume(volume);
   };
 
-  const [selectedTab, setSelectedTab] = useState(0);
+  const handleGlobalActionChanged = (isEnabled) => {
+    setEnabledRulesAreExclusive(isEnabled);
+    execute(`setGlobalAction ${isEnabled ? 'disable' : 'enable'}`);
+  };
+
+  const [selectedTab, setSelectedTab] = useState(2);
 
   return (
     <ThemeProvider theme={theme}>
@@ -326,7 +349,13 @@ function App() {
         )}
 
         {selectedTab === 2 && (
-          <AppRules appRules={appRules} appRulesLoaded={appRulesLoaded} />
+          <AppRules
+            appRules={appRules}
+            appRulesLoaded={appRulesLoaded}
+            enabledRulesAreExclusive={enabledRulesAreExclusive}
+            globalAction={globalAction}
+            onGlobalActionChanged={handleGlobalActionChanged}
+          />
         )}
 
         {selectedTab === 3 && (
