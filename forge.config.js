@@ -37,7 +37,7 @@ module.exports = {
       config: {
         repository: {
           owner: 'nathan-fiscaletti',
-          name: 'keyboardsounds'
+          name: 'keyboardsounds-desktop'
         },
         prerelease: true
       }

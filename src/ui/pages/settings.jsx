@@ -266,7 +266,7 @@ const Settings = ({ appVersion, backEndVersion }) => {
         />
 
         <Link
-          href="https://github.com/nathan-fiscaletti/keyboardsounds/issues"
+          href="https://github.com/nathan-fiscaletti/keyboardsounds-desktop/issues"
           target="_blank"
         >
           <Button

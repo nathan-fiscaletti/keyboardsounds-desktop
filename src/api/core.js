@@ -108,7 +108,7 @@ const kbs = {
 
     checkForUpdate: async function() {
         // TODO: Update to keyboardsounds-desktop
-        return fetch("https://api.github.com/repos/nathan-fiscaletti/keyboardsounds/releases/latest")
+        return fetch("https://api.github.com/repos/nathan-fiscaletti/keyboardsounds-desktop/releases/latest")
             .then(res => res.json())
             .then(release => {
                 if (release.tag_name !== this.appVersion) {
