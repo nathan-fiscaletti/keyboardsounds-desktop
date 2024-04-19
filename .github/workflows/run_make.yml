@@ -15,22 +15,17 @@ jobs:
         node-version: '18'
     - name: Install dependencies
       run: npm install
-    - name: Install WiX Toolset
-      run: |
-        Invoke-WebRequest -Uri 'https://github.com/wixtoolset/wix3/releases/download/wix3141rtm/wix314-binaries.zip' -OutFile 'wix314-binaries.zip'
-        Expand-Archive -Path 'wix314-binaries.zip' -DestinationPath 'C:\Program Files\WiX Toolset v3.14'
-        # Add WiX Toolset to PATH
-        $env:Path += ';C:\Program Files\WiX Toolset v3.14'
-    - name: Build
-      run: npm run make
+    - name: Package Webpack
+      run: npm run package
+    - name: Build Installer
+      run: npm run make-installer:win
+    - name: Rename Installer
+      run: mv "dist/Keyboard Sounds Setup *.exe" "dist/Keyboard-Sounds-Setup-windows-x64.exe"
+    - name: Rename Blockmap
+      run: mv "dist/Keyboard Sounds Setup *.exe.blockmap" "dist/Keyboard-Sounds-Setup-windows-x64.exe.blockmap"
     - name: Upload Artifacts
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          out/make/squirrel.windows/x64/RELEASES
-          out/make/squirrel.windows/x64/kbs_electron-${{ github.event.release.tag_name }}-full.nupkg
-          out/make/squirrel.windows/x64/Keyboard Sounds-${{ github.event.release.tag_name }} Setup.exe
-          out/make/wix/x64/Keyboard Sounds.msi
-          out/make/wix/x64/Keyboard Sounds.wixobj
-          out/make/wix/x64/Keyboard Sounds.wixpdb
-          out/make/wix/x64/Keyboard Sounds.wxs
+          dist/Keyboard-Sounds-Setup-windows-x64.exe
+          dist/Keyboard-Sounds-Setup-windows-x64.exe.blockmap

@@ -91,6 +91,9 @@ typings/
 # Electron-Forge
 out/
 
+# Electron Builder
+dist/
+
 # Lock Files
 package-lock.json
 yarn.lock
