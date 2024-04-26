@@ -20,4 +20,4 @@ PS> kbs --version
 
 Once the Keyboard Sounds back-end is installed, you can download the latest version of Keyboard Sounds for Desktop from the [releases page](https://github.com/nathan-fiscaletti/keyboardsounds-desktop/releases), or click the link below.
 
-[Download Windows Installer (MSI)](https://github.com/nathan-fiscaletti/keyboardsounds-desktop/releases/latest/download/Keyboard.Sounds.msi)
+[Download Windows Installer](https://github.com/nathan-fiscaletti/keyboardsounds-desktop/releases/latest/download/Keyboard-Sounds-Setup-windows-x64.exe)
