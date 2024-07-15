@@ -107,6 +107,9 @@ const Status = ({
           alignItems: "center",
         }}
       >
+        <Typography variant="button" color="GrayText">
+          {displayVolume}%
+        </Typography>
         <Slider
           size="small"
           defaultValue={70}
