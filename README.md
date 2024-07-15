@@ -1,5 +1,9 @@
 # Keyboard Sounds for Desktop
 
+⚠️ This repository is no longer used. Please use the [main repository](https://github.com/nathan-fiscaletti/keyboardsounds) instead.
+
+---
+
 > This application is in the early stages of development. Please report any issues you encounter on [the official Keyboard Sounds issue tracker](https://github.com/nathan-fiscaletti/keyboardsounds/issues).
 
 Keyboard Sounds is an application that will play sounds when you type on your keyboard. This application is a desktop version of the [Keyboard Sounds](https://github.com/nathan-fiscaletti/keyboardsounds) python package.
